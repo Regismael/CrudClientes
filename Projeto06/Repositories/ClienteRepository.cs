@@ -32,5 +32,73 @@ namespace Projeto06.Repositories
 
         }
 
+        //método para atualizar um cliente no banco de dados
+        public void Atualizar(Cliente cliente)
+        {
+            var query = @"
+            UPDATE CLIENTE
+            SET
+                NOME = @Nome,
+                CPF = @Cpf,
+                DATANASCIMENTO = @DataNascimento
+            WHERE
+                ID = @Id
+        ";
+            //abrindo conexão com o banco de dados
+            using (var connection = new SqlConnection(SqlServerSettings.GetConnectionString()))
+            {
+                //executando o comando Sql no banco de dados
+                connection.Execute(query, cliente);
+            }
+        }
+
+        //método para excluir um cliente no banco de dados
+        public void Excluir(Cliente cliente)
+        {
+            var query = @"
+
+                DELETE FROM CLIENTE
+                
+             WHERE 
+                ID = @Id
+
+             ";
+
+            using (var connection = new SqlConnection(SqlServerSettings.GetConnectionString()))
+            {
+                connection.Execute(query, cliente);
+            }
+        }
+
+        //método para retornar uma lista com todos os clientes cadastrados
+        public List<Cliente> ObterTodos()
+        {
+            var query = @"
+                    SELECT * FROM CLIENTE
+                    ORDER BY NOME
+        ";
+
+            using (var connection = new SqlConnection(SqlServerSettings.GetConnectionString()))
+            {
+                return connection.Query<Cliente>(query).ToList();
+            }
+        }
+
+        //método para retornar um cliente baseado no ID
+        public Cliente? ObterPorId(Guid id)
+        {
+            var query = @"
+                SELECT * FROM CLIENTE
+              
+                WHERE ID = @Id
+
+             ";
+
+            //abrindo conexão com o banco de dados
+            using( var connection = new SqlConnection(SqlServerSettings.GetConnectionString()))
+            {
+                return connection.Query<Cliente>(query, new { @Id = id }).FirstOrDefault();
+            }
+        }
     }
 }
